@@ -51,6 +51,7 @@ export const signup = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User created successfull",
+      verificationToken: user.verificationToken,
       user: { ...user._doc, password: undefined },
     });
   } catch (error) {

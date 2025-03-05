@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../Store/AuthStore";
+import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 
 const EmailVerification = () => {
@@ -10,6 +11,19 @@ const EmailVerification = () => {
   const navigate = useNavigate();
 
   const { verifyEmail, error, isLoading } = useAuthStore();
+
+  // Get the verification token from sessionStorage
+  useEffect(() => {
+    const verificationToken = sessionStorage.getItem("verificationToken");
+
+    // Check if the token exists and if it hasn't been shown already
+    if (verificationToken && !sessionStorage.getItem("tokenShown")) {
+      toast.success(`Your verification token is: ${verificationToken}`);
+      sessionStorage.setItem("tokenShown", "true");
+    } else if (!verificationToken) {
+      toast.error("Verification token not found.");
+    }
+  }, [navigate]);
 
   const handleChange = (index, value) => {
     const newCode = [...code];

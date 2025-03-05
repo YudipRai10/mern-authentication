@@ -25,11 +25,19 @@ export const useAuthStore = create((set) => ({
         password,
         name,
       });
+      // Assume the response returns the verificationToken
+      const { verificationToken } = response.data;
+
+      // Store the token in sessionStorage
+      sessionStorage.setItem("verificationToken", verificationToken);
+
       set({
         user: response.data.user,
         isAuthenticated: true,
         isLoading: false,
       });
+
+      return verificationToken;
     } catch (error) {
       set({
         error: error.response.data.message || "Error signing up",
@@ -104,7 +112,9 @@ export const useAuthStore = create((set) => ({
     set({ isCheckingAuth: true, error: null });
 
     try {
-      const response = await axios.get(`${API_URL}/check-auth`);
+      const response = await axios.get(`${API_URL}/check-auth`, {
+        withCredentials: true,
+      });
       set({
         user: response.data.user,
         isAuthenticated: true,
